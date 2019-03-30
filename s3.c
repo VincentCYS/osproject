@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
- 
+#include <string.h>
+
 int main()
 {
+	FILE *outputFile;
 	// 8 to 21
 	// 19:00 to 22:00
 	int NUM_INPUT = 4;
@@ -19,70 +21,82 @@ int main()
 		{ "Meeting", 	"2019-04-18 20:00", "2", 		"4", 		"1", 	"4" }
 	};
 
+	char *fileName[50];
+	strcpy(fileName, "S3_report_fcfs_01.dat");
 	strcpy(algorithm, "FCFS"); // can be removed after the merged
 
 
-	printf("\n\n*** Log File %s *** \n\n", algorithm);
-	printf("%-5s	%-40s	%-20s\n", "ID", "Event", "Accepted/Rejected");
-	printf("=================================================================\n");
+	//printf("%s\n", fileName);
+	outputFile = fopen(fileName, "w");
 
-	for(i = 0; i < NUM_INPUT; i++) 
+	if (outputFile == NULL) 
+	{ 
+		// Error
+		printf("Failed to open the file");
+	} else
 	{
-			// print uid
-			printf("%04d	", i + 1);
-			
-			// priority exists?
-			if (data[i][3] != NULL) 
-			{
-				// addProject
-				if (strcmp(data[i][3], "1") == 0) 
-				{
-					strcpy(eventType, "addProject");
-				// addAssignment
-				} else if (strcmp(data[i][3], "2") == 0) 
-				{
-					strcpy(eventType, "addAssignment");	
-				// addRevision
-				} else if (strcmp(data[i][3], "3") == 0) 
-				{
-					strcpy(eventType, "addRevision");		
-				// addActivity
-				} else if (strcmp(data[i][3], "4") == 0) 
-				{
-					strcpy(eventType, "addActivity");
-				}
-			}
+		fprintf(outputFile, "\n\n*** Log File %s *** \n\n", algorithm);
+		fprintf(outputFile, "%-5s	%-40s	%-20s\n", "ID", "Event", "Accepted/Rejected");
+		fprintf(outputFile, "=================================================================\n");
 
-			// concat event data
-			for (j = 0; j < 3; j++) 
-			{
-				// field exists?
-				if (data[i][j] != NULL) 
+		for(i = 0; i < NUM_INPUT; i++) 
+		{
+				// print uid
+				fprintf(outputFile, "%04d	", i + 1);
+				
+				// priority exists?
+				if (data[i][3] != NULL) 
 				{
-					// add space 
-					sprintf(strbuf, " %s", data[i][j]);
-					strcat(eventType, strbuf);
+					// addProject
+					if (strcmp(data[i][3], "1") == 0) 
+					{
+						strcpy(eventType, "addProject");
+					// addAssignment
+					} else if (strcmp(data[i][3], "2") == 0) 
+					{
+						strcpy(eventType, "addAssignment");	
+					// addRevision
+					} else if (strcmp(data[i][3], "3") == 0) 
+					{
+						strcpy(eventType, "addRevision");		
+					// addActivity
+					} else if (strcmp(data[i][3], "4") == 0) 
+					{
+						strcpy(eventType, "addActivity");
+					}
 				}
-			}
 
-			// status exists?
-			if (data[i][4] != NULL) 
-			{
-				// check accepted/rejected status
-				if (strcmp(data[i][4], "1") == 0) 
+				// concat event data
+				for (j = 0; j < 3; j++) 
 				{
-					strcpy(status, "Accepted");
-				} else 
-				{
-					strcpy(status, "Rejected");
+					// field exists?
+					if (data[i][j] != NULL) 
+					{
+						// add space 
+						sprintf(strbuf, " %s", data[i][j]);
+						strcat(eventType, strbuf);
+					}
 				}
-			}	
 
-			printf("%-40s 	%-20s \n", eventType, status);
+				// status exists?
+				if (data[i][4] != NULL) 
+				{
+					// check accepted/rejected status
+					if (strcmp(data[i][4], "1") == 0) 
+					{
+						strcpy(status, "Accepted");
+					} else 
+					{
+						strcpy(status, "Rejected");
+					}
+				}	
+
+				fprintf(outputFile, "%-40s 	%-20s \n", eventType, status);
+		}
+		fprintf(outputFile, "\n\n");
 	}
-	printf("\n\n");
 
-
+	printf("Log file created!!! \n");
 
 	//algorithm input:  Char *2dArray[][] = [event name, due date, duration, priority,accept(0 or 1, default 0), index ] 
 }
