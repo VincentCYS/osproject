@@ -57,7 +57,6 @@ int childProcessInput() {
 		exit(2);
 	}
 	while (strcmp(buf, "getoff")) {
-		printf("------------------------------[DEBUG] Child %d: I received '%s'!\n", iChild+1, buf);
 		value = strtok(buf, " ");
 		eventID = strdup(value);
 		strcpy(msg, eventID); // Event ID
@@ -100,10 +99,8 @@ int childProcessInput() {
 			strcpy(msg, eventID); // Event ID
 			strcat(msg, "-");
 			strcat(msg, "INVALID");
-			printf("------------------------------[DEBUG] Child %d: I received an invalid input!\n", iChild+1);
 		}
 
-		printf("------------------------------[DEBUG] Child %d: I send '%s'!\n", iChild+1, msg);
 		write(fd[iChild][1][1], msg, strlen(msg) + 1);
 		while ((nRead = read(fd[iChild][0][0], buf, BUFFER_SIZE)) == -1) {
 			if (errno == EAGAIN) {
@@ -117,7 +114,6 @@ int childProcessInput() {
 			printf("Hey! What happened? My parent close the PIPE!! [Received by Child %d]\n", iChild+1);
 		}
 	}
-	printf("------------------------------[DEBUG] Child %d: I exit!\n", iChild+1);
 }
 
 int childInitialize() {
@@ -130,18 +126,15 @@ int parentReceiveData() {
 	char buf[BUFFER_SIZE], *value;
 	for (i = 0; i < INIT_CHILD; i++) {
 		nRead = read(fd[i][1][0], buf, BUFFER_SIZE);
-		printf("------------------------------[DEBUG] Parent: Start to receive Child %d.\n", i+1);
 		switch (nRead) {
 		case -1:
 			if (errno == EAGAIN) {
-				printf("------------------------------[DEBUG] Parent: Child %d PIPE Empty.\n", i+1);
 				break;
 			} else {
 				perror("read");
 				exit(4);
 			}
 		default:
-			printf("------------------------------[DEBUG] Parent: Received Child %d: '%s'\n", i+1, buf);
 			childStatus[i] = 1;
 			valid = (strstr(buf, " ") ? 1 : 0);
 			value = strtok(buf, "-");
@@ -153,8 +146,6 @@ int parentReceiveData() {
 					strcpy(inputData[id][j], value); // Put data into array
 				}
 			}
-			printf("------------------------------[DEBUG] Parent: Added data '%s %s %s %s %s %s'\n", inputData[id][0], inputData[id][1], inputData[id][2], inputData[id][3], inputData[id][4], inputData[id][5]);
-			printf("------------------------------[DEBUG] Parent: Data log '%s'\n", inputLog[id][0]);
 			strcpy(inputLog[id][1], (valid ? "1" : "0"));
 			receivedCount++;
 		}
@@ -173,7 +164,6 @@ int parentPassCaseToChild(char *in) {
 				strcpy(msg, eventID);
 				strcat(msg, " ");
 				strcat(msg, in);
-				printf("------------------------------[DEBUG] Parent: I send to child %d '%s'!\n", i+1, msg);
 				strcpy(inputLog[inputCount++][0], msg);
 				write(fd[i][0][1], msg, strlen(msg) + 1);
 				childStatus[i] = 0;
@@ -193,7 +183,6 @@ int parentProcessInput() {
 	char msg[BUFFER_SIZE+2];
 	while (1) {
 		if (nRead == 0) {
-			printf("------------------------------[ERROR] Parent: Child close the conversation.\n");
 			exit(6);
 		}
 		printf("Please enter:\n");
@@ -203,13 +192,11 @@ int parentProcessInput() {
 				strcpy(msg, "getoff");
 				write(fd[i][0][1], msg, strlen(msg) + 1);
 			}
-			printf("------------------------------[DEBUG] Parent: I exit!\n");
 			break;
 		} else if (!isAddedPeriod) {
 			if (!strcmp(input[0], "addPeriod")) {
 				scanf("%s %s %s %s", &sDate, &endDate, &startTime, &endTime);
 				isAddedPeriod = 1;
-				printf("------------------------------[DEBUG] Parent: Period created! [%s %s %s %s]\n", sDate, endDate, startTime, endTime);
 			} else {
 				printf("Please add period FIRST! (Tips: addPeriod [start date] [end date] [start time] [end time])\n");
 			}
@@ -232,7 +219,6 @@ int parentProcessInput() {
 			while (receivedCount < inputCount) {
 				parentReceiveData();
 			}
-			printf("------------------------------[DEBUG] Parent: RunS3 [%s %s]\n", outputAlgorithm, outputFileName);
 			// Pass to related algorithm function
 		} else {
 			if (inputCount < MAX_INPUT) {
@@ -295,7 +281,6 @@ int createChildProcessor() {
 			printf("Fork Failed\n");
 			exit(3);
 		} else if (pid == 0) { /* child process */
-			printf("------------------------------[DEBUG] Child %d: I was born!\n", iChild+1);
 			childInitialize();
 			closePipe();
 			exit(0);
