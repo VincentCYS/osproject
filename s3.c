@@ -17,10 +17,7 @@ int main()
 
 	createLogFile(NUM, "S3_fcfs_01.log", "FCFS", data);
 	createReportFile("lol.dat", "fcfs", data, 4, 14, 14);
-
 }
-
-
 
 createLogFile(int NUM_INPUT, char * fileName, char *algorithm, char *data[14][6]) {
 	FILE *outputFile;
@@ -98,7 +95,6 @@ createLogFile(int NUM_INPUT, char * fileName, char *algorithm, char *data[14][6]
 		}
 		fprintf(outputFile, "\n\n");
 	}
-
 	printf("Log file created!!! \n");
 
 }
@@ -135,23 +131,10 @@ createTimeTableFile(char *fromDate, char *toDate, char *date[14], char *time[14]
 			fprintf(outputFile, "\n");
 		}
 	}
-
-
-
 	printf("Timetable file created!!! \n");
 
 }
 
-
-/* 
-***Summary Report***
-Algorithm used: XXXXXXXXXXXXXXXXXX
-There are 9999 requests.
-Number of request accepted: 9999
-Number of request rejected: 9999
-Number of time slots used: 9999 (999%)
-
-*/
 createReportFile(char *fileName, char *algorithm, char *data[56][6], int totalTime, int totalDate, int totalRequest) {
 	FILE *outputFile;
 	char *strbuf[30];
@@ -185,22 +168,6 @@ createReportFile(char *fileName, char *algorithm, char *data[56][6], int totalTi
 		fprintf(outputFile, "Number of request accepted: %d\n", totalAccept);
 		fprintf(outputFile, "Number of request rejected: %d\n\n", totalReject);
 		fprintf(outputFile, "Number of time slots used: %d (%.0f%%)\n\n", timeSlots, percent);
-
-		// // print the first line (titles and time)
-		// for(i = 0; i < totalTime; i++) {
-		// 	fprintf(outputFile, "%-20s", startTime);
-		// }
-
-		// // print actual timetable
-		// for(i = 0; i < totalDate; i++) {
-		// 	fprintf(outputFile, "%-20s", date[i]);
-		// 	for(j = 0; j < totalTime; j++) {
-		// 		fprintf(outputFile, "%-20s", data[i][j]);
-		// 	}
-		// 	fprintf(outputFile, "\n");
-		// }
-
-
 	}
 	printf("Timetable file created!!! \n");
 
